@@ -41,6 +41,16 @@ function sp(){
         //define the domain of the scatter plot axes
         //...
         
+        data.forEach(function(d) {
+          d["Household income"] = +d["Household income"];
+          d["Employment rate"] = +d["Employment rate"];
+        });
+
+        x.domain(d3.extent(data, function(d) { return d["Household income"]; })).nice();
+        y.domain(d3.extent(data, function(d) { return d["Employment rate"]; })).nice();
+        
+
+        
         draw();
 
     });
@@ -56,7 +66,9 @@ function sp(){
             .append("text")
             .attr("class", "label")
             .attr("x", width)
-            .attr("y", -6);
+            .attr("y", -6)
+            .style("text-anchor", "end")
+            .text("Household income (Cash)");
             
         // Add y axis and title.
         svg.append("g")
@@ -66,7 +78,9 @@ function sp(){
             .attr("class", "label")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
-            .attr("dy", ".71em");
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Employment rate (%)");
             
         // Add the scatter dots.
         svg.selectAll(".dot")
@@ -75,6 +89,11 @@ function sp(){
             .attr("class", "dot")
             //Define the x and y coordinate data values for the dots
             //...
+            .attr("r", 3.5)
+            .attr("cx", function(d) { return x(d["Household income"]); })
+            .attr("cy", function(d) { return y(d["Employment rate"]); })
+            //.style("fill", function(d) { return color(d.species); });
+
             //tooltip
             .on("mousemove", function(d) {
                 //...    
