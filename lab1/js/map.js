@@ -31,9 +31,9 @@ function map(){
     g = svg.append("g");
 
     // load data and draw the map
-    d3.json("data/se.topojson", function(error, world) {
-        console.log(world);
-        var countries = topojson.feature(world, world.objects.swe_mun).features;
+    d3.json("data/world-topo.topojson", function(error, world) {
+       // console.log(world);
+        var countries = topojson.feature(world, world.objects.countries).features;
         
         //load summary data
         //...
@@ -50,6 +50,13 @@ function map(){
         var cc = {};
 		
         //...
+		
+		
+		
+/*		cc = data.forEach(function(d) {
+		d.country = +d.country;
+		//color = +d3
+		} ) */
 
         country.enter().insert("path")
             .attr("class", "country")
@@ -89,4 +96,3 @@ function map(){
         //...
     }
 }
-

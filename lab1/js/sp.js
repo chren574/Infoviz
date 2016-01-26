@@ -9,7 +9,7 @@ function sp(){
         height = spDiv.height() - margin.top - margin.bottom;
 
     //initialize color scale
-    //...
+    var color = d3.scale.category20b();
     
     //initialize tooltip
     //...
@@ -92,7 +92,7 @@ function sp(){
             .attr("r", 3.5)
             .attr("cx", function(d) { return x(d["Household income"]); })
             .attr("cy", function(d) { return y(d["Employment rate"]); })
-            //.style("fill", function(d) { return color(d.species); });
+            .style("fill", function(d,i) { return color(i); })
 
             //tooltip
             .on("mousemove", function(d) {
@@ -102,13 +102,32 @@ function sp(){
                 //...   
             })
             .on("click",  function(d) {
-                //...    
+                //...
+					//selectDot(self.data[0](1));
+					//console.log(self.data[0]);
+					//console.log(d);
+					
+					pc1.selectLine(d["Country"]);
             });
     }
 
     //method for selecting the dot from other components
     this.selectDot = function(value){
-        //...
+        console.log(value);
+		/*
+		d3.select(".dot")
+		.selectAll("dot")
+		.style("opacity", function(d) {
+			if(!value.empty() )
+			{
+				if(d["Country"] == value)
+					return 1;
+				else
+					return 0;
+			});
+		*/
+		
+		
     };
     
     //method for selecting features of other components

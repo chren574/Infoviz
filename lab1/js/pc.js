@@ -62,7 +62,6 @@ function pc(){
             .on("mousemove", function(d){})
             .on("mouseout", function(){});
 
-            console.log(self.data);
         // Add blue foreground lines for focus.
         foreground = svg.append("svg:g")
             .attr("class", "foreground")
@@ -109,19 +108,44 @@ function pc(){
 
     // Handles a brush event, toggling the display of foreground lines.
     function brush() {
+		var selectedCountries = new Array();
+		
         var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
             extents = actives.map(function(p) { return y[p].brush.extent(); });
-        foreground.style("display", function(d) {
-            return actives.every(function(p, i) {
-                return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+			foreground.style("display", function(d) {
+        foreground.style("opacity", 1)
+            return actives.every(function(p, i) {		
+				
+				if(extents[i][0] <= d[p] && d[p] <= extents[i][1])
+				{
+					//console.log(d["Country"]);
+					selectedCountries.push(d["Country"]);
+					return true;
+				}
+				else{
+					return false;
+				}
             }) ? null : "none";
         });
+		//console.log(selectedCountries);
+		sp1.selectDot(selectedCountries);
     }
 
     //method for selecting the pololyne from other components	
     this.selectLine = function(value){
         //...
-    };
+		console.log(value);
+		//d3.select(this).call(y[self.data[value]].brush = d3.svg.brush().y(y[self.data[value]]).on("brush", brush));
+		d3.select(".foreground")
+		.selectAll("path")
+		.style("opacity", function(d) {
+            if(d["Country"] == value)
+                return 1;
+			else
+				return 0;
+        });
+	
+	};
     
     //method for selecting features of other components
     function selFeature(value){
