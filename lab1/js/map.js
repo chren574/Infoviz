@@ -50,7 +50,7 @@ function map(){
         var cc = {};
 		
         //...
-		
+		var selected = new Array();
 		
 		
 /*		cc = data.forEach(function(d) {
@@ -75,6 +75,16 @@ function map(){
             //selection
             .on("click",  function(d) {
                 //...
+                //Adds the country to a array
+                selected.push(d.properties.name);
+
+                //Sends a string of the country to the public method
+                pc1.selectLine(d.properties.name);
+
+                //Sends a array of the country to the public method
+                sp1.selectDot(selected);
+                //Empty the array
+                selected.pop();
             });
 
     }
