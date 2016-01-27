@@ -49,8 +49,6 @@ function sp(){
         x.domain(d3.extent(data, function(d) { return d["Household income"]; })).nice();
         y.domain(d3.extent(data, function(d) { return d["Employment rate"]; })).nice();
         
-
-        
         draw();
 
     });
@@ -82,13 +80,15 @@ function sp(){
             .style("text-anchor", "end")
             .text("Employment rate (%)");
             
-        // Add the scatter dots.
-        svg.selectAll(".dot")
+        // Add the scatter dots. 
+    		svg.selectAll(".dot")
             .data(self.data)
             .enter().append("circle")
             .attr("class", "dot")
             //Define the x and y coordinate data values for the dots
             //...
+            .attr("stroke-width", 0.5)
+            .attr("stroke", "black")
             .attr("r", 3.5)
             .attr("cx", function(d) { return x(d["Household income"]); })
             .attr("cy", function(d) { return y(d["Employment rate"]); })
@@ -104,30 +104,34 @@ function sp(){
             .on("click",  function(d) {
                 //...
 					//selectDot(self.data[0](1));
-					//console.log(self.data[0]);
-					//console.log(d);
-					
 					pc1.selectLine(d["Country"]);
             });
+
     }
 
     //method for selecting the dot from other components
     this.selectDot = function(value){
-        console.log(value);
-		/*
-		d3.select(".dot")
-		.selectAll("dot")
-		.style("opacity", function(d) {
-			if(!value.empty() )
-			{
-				if(d["Country"] == value)
-					return 1;
-				else
-					return 0;
-			});
-		*/
-		
-		
+
+        // "deselect" all dots
+		svg.selectAll(".dot")
+		.style("stroke-width", 0.5);
+
+		// find the relevant dot in the scatterplot and compare with input
+        svg.selectAll(".dot")
+        .style("stroke-width", function(d){
+
+        	var found = false;
+
+        	value.forEach(function(e){
+        		if(e == d["Country"])
+        		{
+        			found = true;
+        		}
+        	});
+
+    	// transparency 2.0 vs 0.5 is returned if the country was selected or not
+        	return found ? 2.0 : 0.5; 
+        });
     };
     
     //method for selecting features of other components
