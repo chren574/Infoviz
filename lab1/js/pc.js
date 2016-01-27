@@ -7,7 +7,6 @@ function pc(){
     var margin = [30, 10, 10, 10],
         width = pcDiv.width() - margin[1] - margin[3],
         height = pcDiv.height() - margin[0] - margin[2];
-
     
     //initialize color scale
     //...
@@ -69,6 +68,11 @@ function pc(){
             .data(self.data)
             .enter().append("path")
             .attr("d", path)
+
+            .on("click", function(d){
+                pc1.selectLine(d["Country"]);
+            })
+
             .on("mousemove", function(d){
                 tooltip.transition()
                 .duration(200)
