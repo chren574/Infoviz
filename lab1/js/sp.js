@@ -9,7 +9,7 @@ function sp(){
         height = spDiv.height() - margin.top - margin.bottom;
 
     //initialize color scale
-    var color = d3.scale.category20b();
+    var color = d3.scale.category20();
     
     //initialize tooltip
     var tooltip = d3.select("body").append("div")
@@ -41,8 +41,6 @@ function sp(){
         self.data = data;
         
         //define the domain of the scatter plot axes
-        //...
-        
         data.forEach(function(d) {
           d["Household income"] = +d["Household income"];
           d["Employment rate"] = +d["Employment rate"];
@@ -51,12 +49,19 @@ function sp(){
         x.domain(d3.extent(data, function(d) { return d["Household income"]; })).nice();
         y.domain(d3.extent(data, function(d) { return d["Employment rate"]; })).nice();
         
-        draw();
+        draw(data);
 
     });
 
-    function draw()
+    function draw(data)
     {
+
+        var cc = {};
+        
+        // crates an array with countries with an uniqe color
+        data.forEach(function(d) {
+            cc[d["Country"]] = color(d["Country"])
+        });
         
         // Add x axis and title.
         svg.append("g")
@@ -94,7 +99,10 @@ function sp(){
             .attr("r", 3.5)
             .attr("cx", function(d) { return x(d["Household income"]); })
             .attr("cy", function(d) { return y(d["Employment rate"]); })
-            .style("fill", function(d,i) { return color(i); })
+            
+            // Color the countries with data included
+            //.style("fill", function(d,i) { return color(i); })
+            .style("fill", function(d) { return cc[d["Country"]]; })
 
             //tooltip
             .on("mousemove", function(d) {
@@ -112,9 +120,9 @@ function sp(){
                 .style("opacity", 0); 
             })
             .on("click",  function(d) {
-                //...
-					//selectDot(self.data[0](1));
-					pc1.selectLine(d["Country"]);
+                
+				//selectDot(self.data[0](1));
+				pc1.selectLine(d["Country"]);
             });
 
     }

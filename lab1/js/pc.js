@@ -9,7 +9,7 @@ function pc(){
         height = pcDiv.height() - margin[0] - margin[2];
     
     //initialize color scale
-    //...
+    var color = d3.scale.category20();
     
     //initialize tooltip
     var tooltip = d3.select("body").append("div")
@@ -52,7 +52,6 @@ function pc(){
             .attr("class", "background")
             .selectAll("path")
             //add the data and append the path 
-            //...
             .data(self.data)
             .enter().append("path")
             .attr("d", path)
@@ -64,10 +63,12 @@ function pc(){
             .attr("class", "foreground")
             .selectAll("path")
             //add the data and append the path 
-            //...
             .data(self.data)
             .enter().append("path")
             .attr("d", path)
+
+            //Draw color
+            .style("stroke", function(d,i) { return color(i); })
 
             .on("click", function(d){
                 pc1.selectLine(d["Country"]);

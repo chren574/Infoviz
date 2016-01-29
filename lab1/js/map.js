@@ -11,10 +11,12 @@ function map(){
         height = mapDiv.height() - margin.top - margin.bottom;
 
     //initialize color scale
-    //...
+    var color = d3.scale.category20();
     
     //initialize tooltip
-    //...
+    var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
     var projection = d3.geo.mercator()
         .center([50, 60 ])
@@ -37,8 +39,12 @@ function map(){
         
         //load summary data
         //...
+        d3.csv("data/OECD-better-life-index-hi.csv", function(error, data) {
 
-        draw(countries);
+            draw(countries, data);    
+        });
+
+        
         
     });
 
@@ -49,14 +55,17 @@ function map(){
         //initialize a color country object	
         var cc = {};
 		
+        data.forEach(function(d) {
+            cc[d["Country"]] = color(d["Country"])
+        });
+
+        //console.log(cc);
+
         //...
 		var selected = new Array();
 		
 		
-/*		cc = data.forEach(function(d) {
-		d.country = +d.country;
-		//color = +d3
-		} ) */
+
 
         country.enter().insert("path")
             .attr("class", "country")
@@ -64,13 +73,20 @@ function map(){
             .attr("id", function(d) { return d.id; })
             .attr("title", function(d) { return d.properties.name; })
             //country color
-            //...
+            .style("fill", function(d) {
+                return cc[d.properties.name];
+
+            })
             //tooltip
             .on("mousemove", function(d) {
-                //...
+                tooltip.transition()
+                .duration(200)
+                .style("opacity", 0.9);
             })
-            .on("mouseout",  function(d) {
-                //...
+            .on("mouseout", function(d) {
+                tooltip.transition()
+                .duration(200)
+                .style("opacity", 0); 
             })
             //selection
             .on("click",  function(d) {
