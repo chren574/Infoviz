@@ -88,7 +88,7 @@ function sp(){
             .text("Employment rate (%)");
             
         // Add the scatter dots. 
-    		svg.selectAll(".dot")
+    	svg.selectAll(".dot")
             .data(self.data)
             .enter().append("circle")
             .attr("class", "dot")
@@ -120,9 +120,12 @@ function sp(){
                 .style("opacity", 0); 
             })
             .on("click",  function(d) {
+
+                var selectedCountries = new Array();
+                selectedCountries.push(d["Country"]);
                 
-				//selectDot(self.data[0](1));
 				pc1.selectLine(d["Country"]);
+                map.selectCountry(selectedCountries);
             });
 
     }
@@ -147,7 +150,7 @@ function sp(){
         		}
         	});
 
-    	// transparency 2.0 vs 0.5 is returned if the country was selected or not
+    	   // transparency 2.0 vs 0.5 is returned if the country was selected or not
         	return found ? 2.0 : 0.5; 
         });
     };

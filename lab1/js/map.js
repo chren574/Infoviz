@@ -53,8 +53,8 @@ function map(){
         var country = g.selectAll(".country").data(countries);
 
         //initialize a color country object	
-        var cc = {};
-		
+        //var cc = {};
+        cc = {};
         data.forEach(function(d) {
             cc[d["Country"]] = color(d["Country"])
         });
@@ -77,6 +77,10 @@ function map(){
                 return cc[d.properties.name];
 
             })
+
+            .attr("stroke-width", 0.5)
+            .attr("stroke", "black")
+
             //tooltip
             .on("mousemove", function(d) {
                 tooltip.transition()
@@ -99,6 +103,9 @@ function map(){
 
                 //Sends a array of the country to the public method
                 sp1.selectDot(selected);
+
+                // //Sends a array of the country to the public method
+                map.selectCountry(selected);
                 //Empty the array
                 selected.pop();
             });
@@ -116,6 +123,28 @@ function map(){
         g.style("stroke-width", 1 / s).attr("transform", "translate(" + t + ")scale(" + s + ")");
 
     }
+
+    this.selectCountry = function(value){
+
+        //console.log(value);
+        
+        g.selectAll(".country")
+        .style("stroke-width", function(d) {
+ 
+        var found = false;
+
+            value.forEach(function(e){
+                if(e == d.properties.name)
+                {
+                    found = true;
+                }
+            });
+
+        // transparency 2.0 vs 0.5 is returned if the country was selected or not
+            return found ? 3.0 : 0.2;
+        });           
+    
+    };
     
     //method for selecting features of other components
     function selFeature(value){

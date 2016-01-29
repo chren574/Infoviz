@@ -143,6 +143,7 @@ function pc(){
             }) ? null : "none";
         });
 		sp1.selectDot(selectedCountries);
+        map.selectCountry(selectedCountries);
     }
 
     //method for selecting the pololyne from other components	
@@ -159,6 +160,7 @@ function pc(){
                 var selected = new Array();
                 selected.push(value);
                 sp1.selectDot(selected);
+                map.selectCountry(selected);
                 return 1;
             }
 			else
