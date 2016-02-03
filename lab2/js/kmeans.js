@@ -10,6 +10,34 @@
   	'point': []
 	};
 
+
+
+    function centerofcluster(dim) {
+        var temp = [];
+        var size;
+        temp.length = dim.length;
+
+        for(var i = 0; i < clusters["centroid"].length; ++i) {
+            temp.fill(0);
+            size = 0;
+            
+            for(var j = 0; j < clusters["point"].length; ++j) {
+                if(clusters["point"][j]["index"] == i) {
+                    for(var k = 0; k < dim.length; ++k) {
+                        temp[k] += parseFloat( clusters["point"][j][dim[k]] );
+                        size++;
+                    }
+                }
+            }
+            
+            var c = clusters["centroid"][i];
+            for(var k = 0; k < temp.length; ++k) {
+                temp[k] /= size;
+                c[dim[k]] = temp[k];      
+            }    
+        }
+    };
+
     // Select k number random centroids
     function randomcent(data, k) {
         var random;
@@ -18,7 +46,7 @@
             random = Math.floor(Math.random() * data.length) + 1;
             clusters["centroid"].push(data[random]);
         }
-    }
+    };
 
     // calculate the euclidean distance
     function eucldist(c, p, dim) {
@@ -58,10 +86,15 @@
         randomcent(data, k);
 
         // 2
-        sortCluser(dim, data);
+        sortcluser(dim, data);
 
-        console.log(clusters);
+        // 3
+        centerofcluster(dim)
 
+        // 4
+
+        //console.log(clusters["centroid"]);
+        //console.log(clusters["point"]);
     };
     
     
