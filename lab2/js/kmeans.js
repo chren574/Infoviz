@@ -10,7 +10,22 @@
   	'point': []
 	};
 
+    function qualityofcluster() {
+        var c = clusters["centroid"][i];
+        var p = clusters["point"][i];
 
+        for(var i = 0; i < clusters["centroid"].length; ++i) {
+            c = clusters["centroid"][i];
+            for(var j = 0; j < clusters["point"].length; ++j) {
+                p = clusters["point"][i];
+
+                // Separat för varje k
+                // if-sats for att beräkna kvaliten
+
+            }
+        }
+
+    }
 
     function centerofcluster(dim) {
         var temp = [];
@@ -20,7 +35,7 @@
         for(var i = 0; i < clusters["centroid"].length; ++i) {
             temp.fill(0);
             size = 0;
-            
+
             for(var j = 0; j < clusters["point"].length; ++j) {
                 if(clusters["point"][j]["index"] == i) {
                     for(var k = 0; k < dim.length; ++k) {
@@ -89,10 +104,10 @@
         sortcluser(dim, data);
 
         // 3
-        centerofcluster(dim)
+        centerofcluster(dim);
 
         // 4
-
+        qualityofcluster();
         //console.log(clusters["centroid"]);
         //console.log(clusters["point"]);
     };
