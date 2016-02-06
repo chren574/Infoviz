@@ -43,26 +43,12 @@ function pc(){
         var kmeansRes = kmeans(data,k);
         
         //initialize the cluster colors
-        colors = [];
-         // var color = d3.scale.category20();
+        var color = d3.scale.category20();
 
-        for (var i = 0; i < k; i++) {
-            colors.push(randomColor());
-        };
-
-        function randomColor(){
-
-            var r = Math.round(Math.random()*255);
-            var g = Math.round(Math.random()*255);
-            var b = Math.round(Math.random()*255);
-
-            return "rgb("+r+","+g+","+b+")";
-        }
-        
-        draw(kmeansRes);
+        draw(kmeansRes, color);
     });
 
-    function draw(kmeansRes){
+    function draw(kmeansRes, color){
         
         // Add grey background lines for context.
         background = svg.append("svg:g")
@@ -79,11 +65,7 @@ function pc(){
             .data(self.data)
             .enter().append("svg:path")
             .attr("d", path)
-            .style("stroke", function(d,i) { 
-                return colors[kmeansRes[i]];
-                //return "hsl(" + Math.random() * 360 + ",100%,50%)"; 
-                
-            }); 
+            .style("stroke",  function(d, i) { return color( kmeansRes[i] ); });
     
 
         // Add a group element for each dimension.

@@ -152,7 +152,7 @@
     console.log("Final sum of square error value: " + error);
     console.log("Total iterations: " + tot);
 
-    console.log(colorindex);
+    //console.log(colorindex);
 
     return colorindex;
 
