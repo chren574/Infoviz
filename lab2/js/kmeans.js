@@ -60,6 +60,7 @@
 
         var min, dist, index;
         var point;
+        colorindex = [];
 
         // if the array is full of points, remove all points.
         if(clusterArray[0].length > 1) {
@@ -81,6 +82,7 @@
                 }
             }
             clusterArray[index].push(point);
+            colorindex.push(index);
         }
         return clusterArray;
     };
@@ -149,4 +151,9 @@
 
     console.log("Final sum of square error value: " + error);
     console.log("Total iterations: " + tot);
+
+    console.log(colorindex);
+
+    return colorindex;
+
     };
