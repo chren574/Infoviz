@@ -5,149 +5,148 @@
     * @return {Object}
     */
 
-    clusters = {
-  	'centroid'  : [],
-  	'point': []
-	};
-
-
-    function qualityofcluster(dim) {
-        var c, p; 
-        var error = 0;
-
-        for(var i = 0; i < clusters["centroid"].length; ++i) {
-            c = clusters["centroid"][i];
-            for(var j = 0; j < clusters["point"].length; ++j) {  
-            //    console.log(c["index"]);
-                p = clusters["point"][j];
-              //  console.log(p["index"]);
-                if(p["index"] == i) {
-
-                    // Separat för varje k
-                    // if-sats for att beräkna kvaliten
-                    //console.log(clusters["centroid"][i]);
-                    error += Math.pow(eucldist(c, p, dim), 2);
-                }
-            }
-        }
-        //console.log(error);
-        return error;
-    }
-
-    function centerofcluster(dim) {
-
-        var temp = [];
-        temp.length = dim.length;
-        var size;
-        
-
-        for(var i = 0; i < clusters["centroid"].length; ++i) {
-            //temp.fill(0);
-            temp = [0, 0, 0];
-            //temp = [];
-            size = 0;
-
-            for(var j = 0; j < clusters["point"].length; ++j) {
-                if(clusters["point"][j]["index"] == i) {
-                    for(var k = 0; k < dim.length; ++k) {
-                        //console.log(temp[0]);
-                        temp[k] += parseFloat( clusters["point"][j][dim[k]] );
-                        size++;
-                        
-                        //console.log(parseFloat( clusters["point"][j][dim[k]] ));
-                    }
-
-                }
-            }
-            console.log(temp);
-            var c = clusters["centroid"][i];
-            //console.log(c);
-            //console.log(clusters["centroid"][i]);
-            for(var k = 0; k < temp.length; ++k) {
-                temp[k] /= size;
-                //console.log(clusters["centroid"][i][dim[k]]);
-                //console.log("Temp k(0): " + temp[0]);
-                clusters["centroid"][i][dim[k]] = temp[k]; // Evil line
-                //console.log(clusters["centroid"][i][dim[k]]);
-                //console.log(clusters["centroid"][i]);    
-                //c[dim[k]] = temp[k];
-                //console.log("cluster: " + c);
-                //console.log("temp[k]: " + temp[k]);      
-            }    
-        }
-        //console.log(clusters["centroid"][0]['A'] + "");
-    };
-
     // Select k number random centroids
-    function randomcent(data, k) {
+    function randomCent(data, k) {
+        var array = [];
         var random;
 
         for(var i = 0; i < k; ++i) {
             random = Math.floor(Math.random() * data.length) + 1;
-            clusters["centroid"].push(data[random]);
+
+            var newCluster = [];
+            newCluster.push( parseData( data[random]) );
+            array.push(newCluster);
         }
-    };
+        return array;
+    }
+
+    // Parses a data object (string) to float
+    function parseData(d) {
+        var obj = [];
+
+        for(var i = 0; i < DIM.length; ++i) {
+            obj.push( parseFloat ( d[DIM[i]] ) );
+        }
+
+        return obj;
+    }
 
     // calculate the euclidean distance
-    function eucldist(c, p, dim) {
-    	var sum = 0;
- /*       console.log("DIM IS " + dim.length);
-        console.log("C IS " + c);
-        console.log("P IS " + p);
-        console.log("DIM IS " + dim); */
-    	for(var i = 0; i < dim.length; ++i) {
-    		sum += Math.pow(c[dim[i]] - p[dim[i]], 2);
-    	}
-    	//console.log(sum);
+    function euclDist(c, p) {
+        var sum = 0;
+
+        for(var i = 0; i < c.length; ++i) {
+            sum += Math.pow(c[i] - p[i], 2);
+        }
         return Math.sqrt(sum);
     };
 
+    // removes all elements in the clusters except the centroids.
+    function clearClusters(clusterArray) {
+        var newArray = [];
+
+        for(var i = 0; i < clusterArray.length; ++i) {
+            var cluster = [];
+            cluster.push(clusterArray[i][0]);
+            newArray.push(cluster);
+        }
+
+        clusterArray = newArray;
+        return clusterArray;
+    }
+
     // Select points by k clusters
-    function sortcluser(dim, data) {
+    function sortCluser(data, clusterArray) {
 
         var min, dist, index;
+        var point;
 
-        clusters["point"] = [];
+        // if the array is full of points, remove all points.
+        if(clusterArray[0].length > 1) {
+            clusterArray = clearClusters(clusterArray);
+        }
 
+        // distribute the points to the nearest clusters
         for(var i = 0; i < data.length; ++i) {
-            min = Number.MAX_VALUE, index = 0;
-            for(var j = 0; j < clusters["centroid"].length; ++j) {
-                //console.log(clusters["centroid"][j]);
-                dist = eucldist(clusters["centroid"][j], data[i], dim);
+            min = Number.MAX_VALUE;
+            point = parseData(data[i]);
+
+            for(var c = 0; c < clusterArray.length; ++c) {
+
+                dist = euclDist(point , clusterArray[c][0] );
+
                 if(dist < min) {
                     min = dist;
-                    index = j;
+                    index = c;
                 }
             }
-            clusters["point"].push(data[i]);
-            clusters["point"][i]["index"] = index;
+            clusterArray[index].push(point);
         }
+        return clusterArray;
     };
 
+    // find the new centroids.
+    function recalcClusters(clusterArray) {
+        var center =  [];
+        for(var i = 0; i < clusterArray.length; ++i) {
+            center = calcClusterCenter(clusterArray[i]);
+            clusterArray[i][0] = center;
+        }
+        
+        return clusterArray;
+    }
+
+    // find the new centroid with "Center of mass".
+    function calcClusterCenter(cluster) {
+        var center = [];
+        center.length = DIM.length;
+        center.fill(0);
+
+        for(var i = 1; i < cluster.length; ++i) {
+            for(var d = 0; d < DIM.length; ++d) {
+                center[d] += cluster[i][d];
+            }
+        }   
+
+        for(var d = 0; d < DIM.length; ++d) {
+            center[d] /= (cluster.length-1);
+        }
+        return center;
+    }
+
+    // The square error value for all points.
+    function sumSquaredError(clusterArray) {
+        var error = 0.0;
+
+        for(var c = 0; c < clusterArray.length; ++c) {
+            for(var p = 1; p < clusterArray[c].length; ++p) {
+                error += Math.pow(euclDist( clusterArray[c][0], clusterArray[c][p] ) , 2);
+            }
+        }
+        return error;
+    }
    
+   // The "main" function.
     function kmeans(data, k) {
 
-        var err;
-        var threshold = 0.5;
-        var dim = Object.keys(data[0]);
-        
-        // 1
-        randomcent(data, k);
-        //console.log(clusters["centroid"]);
+        DIM = Object.keys(data[0]);
+        var error = Number.MAX_VALUE, prevError;
+        var threshold = 0.3;
+        tot = 0;
+        // for k items
+        var clusters = randomCent(data, k);
 
         do{
-        // 2
-            sortcluser(dim, data);
+           // 2. Distributes points into clusers
+           clusters = sortCluser(data, clusters);
+           // 3.
+           clusters = recalcClusters(clusters);
+           // 4.
+           prevError = error;
+           error = sumSquaredError(clusters);
+           ++tot;
+        }while(error != prevError);
 
-        // 3
-            centerofcluster(dim);
-            //console.log(clusters["centroid"]);
-        // 4
-            err = qualityofcluster(dim);
-            //console.log(clusters["centroid"]);
-            //console.log("Error = " + err);
-            //console.log(clusters["point"].length);
-        }while(err > threshold);
+    console.log("Final sum of square error value: " + error);
+    console.log("Total iterations: " + tot);
     };
-    
-    
