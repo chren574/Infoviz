@@ -58,6 +58,14 @@ function map(data) {
         var data = [];
         array.map(function (d, i) {
             //Complete the code
+                data.push({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "point",
+                        "coordinates": [d.lat, d.lon]
+                }//,
+                //properties: ,
+            });
         });
         return data;
     }
@@ -75,7 +83,7 @@ function map(data) {
                 .style("stroke", "white");
 
         //draw point        
-        var point //Complete the code
+        var point; //Complete the code
     };
 
     //Filters data points according to the specified magnitude
