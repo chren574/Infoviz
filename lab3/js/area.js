@@ -3,7 +3,7 @@
 
 function area(data) {
     var areaDiv = $("#area");
-
+    self.data = data;
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
     margin2 = {top: areaDiv.height() - 50, right: 40, bottom: 20, left: 40},
     width = areaDiv.width() - margin.left - margin.right,
@@ -11,7 +11,7 @@ function area(data) {
             height2 = areaDiv.height() - margin2.top - margin2.bottom;
 
     //Sets the data format
-    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ");//Complete the code
+    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ").parse;//Complete the code
 
     //Sets the scales 
     var x = d3.time.scale().range([0, width]),
@@ -33,7 +33,7 @@ function area(data) {
     var area = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x(d.date);//Complete the code
+                return x(d.time);//Complete the code
             })
             .y0(height)
             .y1(function (d) {
@@ -44,7 +44,7 @@ function area(data) {
         var area2 = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x2(d.date);//Complete the code
+                return x2(d.time);//Complete the code
             })
             .y0(height2)
             .y1(function (d) {
@@ -71,12 +71,17 @@ function area(data) {
     var context = svg.append("g")
             .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
+    // Loop through the data
+    data.forEach(function(d) {
+          d.time = format(d.time);
+          d.mag = +d.mag;
+        });
+
     //Initializes the axis domains for the big chart
-    x.domain(d3.extent(data.map(function(d) { return format.parse(d.time); })));//Complete the code
-    y.domain([
-        d3.min(data.map(function(d) { return d.mag; })), 
-        d3.max(data.map(function(d) { return d.mag; }))
-        ]);//Complete the code
+    x.domain(
+        d3.extent(data.map(function(d) { return d.time; })));//Complete the code
+    y.domain(
+        d3.extent(data.map(function(d) { return d.mag; })));//Complete the code
 
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
