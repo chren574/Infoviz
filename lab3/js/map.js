@@ -58,14 +58,24 @@ function map(data) {
         var data = [];
         array.map(function (d, i) {
             //Complete the code
-                data.push({
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "point",
-                        "coordinates": [d.lat, d.lon]
-                }//,
-                //properties: ,
-            });
+                data.push (
+                {
+                    type: "Feature", 
+                    geometry: { 
+                        type : "Point", 
+                        coordinates: [(d.lon), (d.lat)]
+                    },
+                    properties: {
+                        id: d.id,
+                        time: d.time,
+                        lat: d.lat,
+                        lon: d.lon,
+                        depth: d.depth,
+                        mag: d.mag,
+                        place: d.place,
+                    } 
+                }
+            );
         });
         return data;
     }
@@ -83,12 +93,30 @@ function map(data) {
                 .style("stroke", "white");
 
         //draw point        
-        var point; //Complete the code
+        var point = g.append("path")
+            .datum(geoData)
+            .attr("d", path); //Complete the code
     };
 
     //Filters data points according to the specified magnitude
     function filterMag(value) {
         //Complete the code
+        /*
+        console.log(geoData.properties.id);
+        
+        geoData.features.forEach(function(d){ 
+            //console.log(d.properties.id);
+            console.log(features.properties.mag);
+        return features.properties.mag; });
+        //console.log(parseFloat(geoData.features[0].properties.mag));
+        
+        var point = g.append("path")
+        .datum(geoData)
+        .attr("d", path)
+        .filter(function(d){ 
+            //console.log(d.properties.id);
+        return d.mag >=  value; }); //color the path points;
+*/
     }
     
     //Filters data points according to the specified time window
