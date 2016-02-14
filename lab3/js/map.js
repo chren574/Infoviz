@@ -22,7 +22,7 @@ function map(data) {
 
     //Sets the colormap
     var colors = colorbrewer.Set3[10];
-
+    //console.log(colors);
     //Assings the svg canvas to the map div
     var svg = d3.select("#map").append("svg")
             .attr("width", width)
@@ -105,29 +105,75 @@ function map(data) {
 
     //Filters data points according to the specified magnitude
     function filterMag(value) {
-        //Complete the code
+    
+        var magnitude = value;
+
+        g.selectAll(".point").each(function(p) {
+
+            var point = d3.select(this);
+            //console.log(point);
+                //console.log(point.style("opacity"));
+                point.style("opacity", function (d) {
+                    if(d.properties.mag >= magnitude) {
+                        return 1;
+                    } else { return 0; }
+
+            });
+        });
+
     }
     
     //Filters data points according to the specified time window
     this.filterTime = function (value) {
 
-        g.selectAll(".point").each(function(p) {
-        // Store each point (class) in a temp. variable
-        var point = d3.select(this);
-            point.style("opacity", function (d) {
-                // Convert to date from string
-                var timeObj = new Date(d.properties.time);
-                // Within time range
-                if( (timeObj >= value[0]) && (timeObj < value[1]) ) {
-                    return 1;
-                } else { return 0; }
-            })
-        });
+        if(value[0].getTime() == value[1].getTime()) {
+            g.selectAll(".point").each(function(p) {
+            // Store each point (class) in a temp. variable
+            var point = d3.select(this);
+                point.style("opacity", 1);
+            });
+        } else {
+            g.selectAll(".point").each(function(p) {
+            // Store each point (class) in a temp. variable
+            var point = d3.select(this);
+                point.style("opacity", function (d) {
+                    // Convert to date from string
+                    var timeObj = new Date(d.properties.time);
+                    // Within time range
+                    if( (timeObj >= value[0]) && (timeObj < value[1]) ) {
+                        return 1;
+                    } else { return 0; }
+                })
+            });
+        }
     };
 
     //Calls k-means function and changes the color of the points  
     this.cluster = function () {
-        //Complete the code
+        // Extract k-value from slider
+        var k = document.getElementById("k").value;
+
+        var pointArray = [];
+
+        // Saves all points in a array
+        g.selectAll(".point").each(function(p) {
+            pointArray.push(p.geometry.coordinates);    
+        });
+
+        // Runs k-means
+        // Returns index that corrospond with each cluster
+        var colorindex = kmeans(pointArray, k);
+
+        // Runs through all points
+        g.selectAll(".point").each(function(p, i) {
+
+            var ci = colorindex[i];
+            var point = d3.select(this);
+
+            point.style("fill", function (d) {
+                return colors[ci];
+            });
+        });        
     };
 
     //Zoom and panning method
