@@ -126,6 +126,8 @@ function area(data) {
         focus.select("path").attr("d", area);
         focus.select(".x.axis").call(xAxis);
         //Complete the code
+        // send an array of starttime and endtime
+        map1.filterTime(brush.extent());
     }
 
 

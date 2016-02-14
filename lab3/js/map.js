@@ -92,36 +92,37 @@ function map(data) {
                 .style("fill", "lightgray")
                 .style("stroke", "white");
 
-        //draw point        
-        var point = g.append("path")
-            .datum(geoData)
-            .attr("d", path); //Complete the code
+        //draw point
+        var point = g.selectAll("path").data(geoData.features);
+        point.enter()
+            .append("path")
+            // Adds a classname tp all ponts in the graphics
+            .attr("class", "point")
+            .attr("d", path)
+            .style("opacity", 1);
+          
     };
 
     //Filters data points according to the specified magnitude
     function filterMag(value) {
         //Complete the code
-        /*
-        console.log(geoData.properties.id);
-        
-        geoData.features.forEach(function(d){ 
-            //console.log(d.properties.id);
-            console.log(features.properties.mag);
-        return features.properties.mag; });
-        //console.log(parseFloat(geoData.features[0].properties.mag));
-        
-        var point = g.append("path")
-        .datum(geoData)
-        .attr("d", path)
-        .filter(function(d){ 
-            //console.log(d.properties.id);
-        return d.mag >=  value; }); //color the path points;
-*/
     }
     
     //Filters data points according to the specified time window
     this.filterTime = function (value) {
-        //Complete the code
+
+        g.selectAll(".point").each(function(p) {
+        // Store each point (class) in a temp. variable
+        var point = d3.select(this);
+            point.style("opacity", function (d) {
+                // Convert to date from string
+                var timeObj = new Date(d.properties.time);
+                // Within time range
+                if( (timeObj >= value[0]) && (timeObj < value[1]) ) {
+                    return 1;
+                } else { return 0; }
+            })
+        });
     };
 
     //Calls k-means function and changes the color of the points  
